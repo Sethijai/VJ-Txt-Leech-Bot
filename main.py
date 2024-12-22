@@ -24,7 +24,7 @@ from pyrogram.errors import FloodWait
 from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
 from pyrogram.types.messages_and_media import message
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from bs4 import BeautifulSoup
 
 bot = Client(
     "bot",
@@ -170,10 +170,34 @@ async def upload(bot: Client, m: Message):
     raw_text = input0.text
     await input0.delete(True)
 
-    await editable.edit("**Now Please Send Me Your Batch Name**")
-    input1: Message = await bot.listen(editable.chat.id)
-    raw_text0 = input1.text
-    await input1.delete(True)
+    await editable.edit("**Enter Batch Name or send /d for grabing from text filename.**")                                                        
+    input20: Message = await bot.listen(editable.chat.id)                                                        
+    raw_text20 = input20.text                                                        
+    await input20.delete(True)                                                        
+    if raw_text20 == '/d':                                                        
+        b_name = file_name                                                        
+    else:                                                        
+        b_name = raw_text0
+
+    await editable.edit("**Enter Your Name like `HACKHEIST` or send  `op` for use default**")                                                        
+    input15: Message = await bot.listen(editable.chat.id)                                                        
+    raw_text15 = input15.text                                                        
+    await input15.delete(True)                                                        
+    highlighter  = f"️ ⁪⁬⁮⁮⁮"
+    if raw_text15 == 'op':
+        OP = highlighter 
+    else:
+        OP = raw_text15
+
+    await editable.edit("**If you want to Download BW Videos then send your BW LOGIN TOKEN to download or send `NO_BW` for not downloading BW\n\nNOTE:- You can send your any working token no need specific token in which batch purchase only need token\nI don't need that specific token in which have TXT file batch 🥰\n\nCREDITS - 𝗛𝗔𝗖𝗞𝗛𝗘𝗜𝗦𝗧**")                                                        
+    input20: Message = await bot.listen(editable.chat.id)                                                        
+    raw_text20 = input20.text                                                        
+    await input20.delete(True)                                                        
+    highlighter  = f"️ ⁪⁬⁮⁮⁮"
+    if raw_text20 == 'NO_BW':
+        NO_BW = highlighter 
+    else:
+        NO_BW = raw_text20
     
 
     await editable.edit("**𝔼ɴᴛᴇʀ ʀᴇ𝕤ᴏʟᴜᴛɪᴏɴ📸**\n144,240,360,480,720,1080 please choose quality")
@@ -210,11 +234,12 @@ async def upload(bot: Client, m: Message):
     else:
         MR = raw_text3
    
-    await editable.edit("Now send the Thumb url/nEg » https://graph.org/file/ce1723991756e48c35aa1.jpg \n Or if don't want thumbnail send = no")
+    await editable.edit("**USE THIS - `https://i.ibb.co/W6d91vd/66f7961e.jpg` **")  
     input6 = message = await bot.listen(editable.chat.id)
     raw_text6 = input6.text
     await input6.delete(True)
-    await editable.delete()
+    #await editable.delete()
+    thumb = input6.text
 
     thumb = input6.text
     if thumb.startswith("http://") or thumb.startswith("https://"):
@@ -248,8 +273,7 @@ async def upload(bot: Client, m: Message):
              url =  "https://d26g5bnklkwsh4.cloudfront.net/" + id + "/master.m3u8"
 
             name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
-            name = f'{str(count).zfill(3)}) {name1[:60]}'
-
+            name = f'{OP} {MR} {name1[:60]}'
             if "youtu" in url:
                 ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
             else:
@@ -262,8 +286,8 @@ async def upload(bot: Client, m: Message):
 
             try:  
                 
-                cc = f'**[📽️] Vid_ID:** {str(count).zfill(3)}.** {𝗻𝗮𝗺𝗲𝟭}{MR}.mkv\n**𝔹ᴀᴛᴄʜ** » **{raw_text0}**'
-                cc1 = f'**[📁] Pdf_ID:** {str(count).zfill(3)}. {𝗻𝗮𝗺𝗲𝟭}{MR}.pdf \n**𝔹ᴀᴛᴄʜ** » **{raw_text0}**'
+                cc = f'**{name1} {MR}.mkv**\n\n**❃ 𝗕𝗮𝘁𝗰𝗵 » {b_name}**\n\n**♛ 𝔻𝕆𝕎ℕ𝕃𝕆𝔸𝔻𝔼𝔻 𝔹𝕐 ★ {MR}**\n**━━━━━━━✦✗✦━━━━━━━**\n**{WEB}**'
+                cc1 = f'**{name1} {MR}.pdf**\n\n**❃ 𝗕𝗮𝘁𝗰𝗵 » {b_name}**\n\n**♛ 𝔻𝕆𝕎ℕ𝕃𝕆𝔸𝔻𝔼𝔻 𝔹𝕐 ★ {MR}**\n**━━━━━━━✦✗✦━━━━━━━**\n**{WEB}**'
                 if "drive" in url:
                     try:
                         ka = await helper.download(url, name)
@@ -288,22 +312,22 @@ async def upload(bot: Client, m: Message):
                         await m.reply_text(str(e))
                         time.sleep(e.x)
                         continue
-                else:
-                    Show = f"**⥥ 🄳🄾🅆🄽🄻🄾🄰🄳🄸🄽🄶⬇️⬇️... »**\n\n**📝Name »** `{name}\n❄Quality » {raw_text2}`\n\n**🔗URL »** `{url}`"
-                    prog = await m.reply_text(Show)
-                    res_file = await helper.download_video(url, cmd, name)
-                    filename = res_file
-                    await prog.delete(True)
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)
-                    count += 1
-                    time.sleep(1)
-
-            except Exception as e:
-                await m.reply_text(
-                    f"**downloading Interupted **\n{str(e)}\n**Name** » {name}\n**Link** » `{url}`"
-                )
+                else:                                                        
+                    Show = f"**⥥ 📥 ＤＯＷＮＬＯＤＩＮＧ 📥 :-**\n\n**📝Name »** `{name}\n❄𝐐𝐮𝐚𝐥𝐢𝐭𝐲 » {raw_text2}`\n\n**Url :-** `Kya karega URL dekhke ☠️☠️`\n\n **Bot made by {MR} (Daddy)🧑🏻‍💻**"                                                        
+                    prog = await m.reply_text(Show)                                                        
+                    res_file = await helper.download_video(url, cmd, name)                                                        
+                    filename = res_file                                                        
+                    await prog.delete(True)                                                        
+                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)                                                        
+                    count += 1                                                        
+                    time.sleep(1)                                                        
+                                                        
+            except Exception as e:                                                        
+                await m.reply_text(                                                        
+                    f"**Failed to Download/Extract 😫**\n\n**Name** - {cc}\n**𝗟𝗜𝗡𝗞** - {url}\n\nSorry {MR} 🙏**"                                                        
+                )                                                        
                 continue
-
+                
     except Exception as e:
         await m.reply_text(e)
     await m.reply_text("**𝔻ᴏɴᴇ 𝔹ᴏ𝕤𝕤😎**")
