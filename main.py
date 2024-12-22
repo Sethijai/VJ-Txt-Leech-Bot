@@ -33,19 +33,115 @@ bot = Client(
     bot_token=BOT_TOKEN)
 
 
-@bot.on_message(filters.command(["start"]))
-async def start(bot: Client, m: Message):
-    await m.reply_text(f"<b>Hello {m.from_user.mention} 👋\n\n I Am A Bot For Download Links From Your **.TXT** File And Then Upload That File On Telegram So Basically If You Want To Use Me First Send Me /upload Command And Then Follow Few Steps..\n\nUse /stop to stop any ongoing task.</b>")
-
-
-@bot.on_message(filters.command("stop"))
-async def restart_handler(_, m):
-    await m.reply_text("**Stopped**🚦", True)
+OP_COMMAND = os.environ.get("COMMAND", "op")
+STOP_COMMAND = os.environ.get("STOPING", "Stop")
+                                                        
+                                                        
+@bot.on_message(filters.command([STOP_COMMAND]))                                                        
+async def restart_handler(_, m):                                                        
+    await m.reply_text("🚦**STOPPED**🚦", True)                                                        
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
+#Initialize a dictionary to store files and status per user
+user_files = {}
 
-@bot.on_message(filters.command(["upload"]))
+@bot.on_message(filters.command('h2t'))
+async def collect_files(bot: Client, m: Message):
+    user_id = m.from_user.id
+    user_files[user_id] = {'files': [], 'status': 'collecting'}
+
+    editable = await m.reply_text("Send all your HTML files in bulk. When done, send /h2tm to process, or /cancel to cancel.")
+
+@bot.on_message(filters.document & filters.create(lambda _, __, m: m.from_user.id in user_files and user_files[m.from_user.id]['status'] == 'collecting'))
+async def save_file(bot: Client, m: Message):
+    user_id = m.from_user.id
+    if len(user_files[user_id]['files']) >= 20:
+        await m.reply_text("You have reached the maximum limit of 20 files.")
+        return
+
+    # Download the file and add it to the user’s file list
+    html_file = await m.download()
+    user_files[user_id]['files'].append(html_file)
+    await m.reply_text(f"File received. Total files: {len(user_files[user_id]['files'])}")
+
+@bot.on_message(filters.command('h2tm'))
+async def process_files(bot: Client, m: Message):
+    user_id = m.from_user.id
+    if user_id not in user_files or user_files[user_id]['status'] != 'collecting':
+        await m.reply_text("No files to process. Use /h2t to start collecting files.")
+        return
+    
+    user_files[user_id]['status'] = 'processing'
+    all_videos = []
+
+    # Process each HTML file
+    for html_file in user_files[user_id]['files']:
+        with open(html_file, 'r', encoding='utf-8') as f:
+            soup = BeautifulSoup(f, 'html.parser')
+            teacher_name = soup.title.text.split('-')[-1].strip() if soup.title else "Unknown Teacher"
+
+            rows = soup.find_all('tr')
+            for row in rows:
+                td_elements = row.find_all('td')
+                if len(td_elements) == 0:
+                    continue
+
+                # Extract video title
+                title = td_elements[0].text.strip()
+
+                # Extract download and PDF links
+                download_button = row.find('button', class_='download-btn')
+                pdf_button = row.find('button', class_='pdf-btn')
+                
+                # Get links and replace 'NONE' with a default image link
+                download_link = download_button['onclick'].split("'")[1] if download_button else 'NONE'
+                pdf_link = pdf_button['onclick'].split("'")[1] if pdf_button else 'NONE'
+
+                # Replace 'NONE' with image URL
+                if 'NONE' in download_link:
+                    download_link = 'https://i.ibb.co/4Ng0nk7/6717abd0.jpg'
+                if 'NONE' in pdf_link:
+                    pdf_link = 'https://i.ibb.co/4Ng0nk7/6717abd0.jpg'
+
+                # Append both download and PDF links with the teacher's name to the list
+                all_videos.append(f"{title} {teacher_name}: {download_link}")
+                all_videos.append(f"{title} {teacher_name}: {pdf_link}")
+
+        # Delete each processed file
+        os.remove(html_file)
+
+    # Create a merged text file to save all extracted data
+    merged_txt_file = 'HACKHEIST_Merged.txt'
+    with open(merged_txt_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(all_videos))
+
+    # Send the merged text file as a reply
+    await m.reply_document(document=merged_txt_file, caption=f"Processed {len(user_files[user_id]['files'])} files successfully.")
+    
+    # Remove the merged text file after sending it
+    os.remove(merged_txt_file)
+
+    # Clear the user’s file list after processing
+    del user_files[user_id]
+
+@bot.on_message(filters.command('cancel'))
+async def cancel_process(bot: Client, m: Message):
+    user_id = m.from_user.id
+    if user_id in user_files:
+        # Remove any downloaded files if canceling the process
+        for file_path in user_files[user_id]['files']:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        del user_files[user_id]
+        await m.reply_text("Process canceled, and all collected files have been removed.")
+    else:
+        await m.reply_text("No process to cancel.")
+
+
+
+@bot.on_message(filters.command([OP_COMMAND]))
 async def upload(bot: Client, m: Message):
     editable = await m.reply_text('𝕤ᴇɴᴅ ᴛxᴛ ғɪʟᴇ ⚡️')
     input: Message = await bot.listen(editable.chat.id)
