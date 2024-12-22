@@ -167,17 +167,17 @@ async def upload(bot: Client, m: Message):
    
     await editable.edit(f"**𝕋ᴏᴛᴀʟ ʟɪɴᴋ𝕤 ғᴏᴜɴᴅ ᴀʀᴇ🔗🔗** **{len(links)}**\n\n**𝕊ᴇɴᴅ 𝔽ʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ɪɴɪᴛɪᴀʟ ɪ𝕤** **1**")
     input0: Message = await bot.listen(editable.chat.id)
-    raw_text = input0.text
+    raw_text0 = input0.text
     await input0.delete(True)
 
     await editable.edit("**Enter Batch Name or send /d for grabing from text filename.**")                                                        
-    input20: Message = await bot.listen(editable.chat.id)                                                        
-    raw_text20 = input20.text                                                        
-    await input20.delete(True)                                                        
-    if raw_text20 == '/d':                                                        
+    input19: Message = await bot.listen(editable.chat.id)                                                        
+    raw_text19 = input19.text                                                        
+    await input19.delete(True)                                                        
+    if raw_text19 == '/d':                                                        
         b_name = file_name                                                        
     else:                                                        
-        b_name = raw_text0
+        b_name = raw_text19
 
     await editable.edit("**Enter Your Name like `HACKHEIST` or send  `op` for use default**")                                                        
     input15: Message = await bot.listen(editable.chat.id)                                                        
